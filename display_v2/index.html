@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>人車分配表-顯示(新)</title>
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- import the webpage's javascript file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./script.js" defer></script>
+  </head>
+  <body onload="getCurrentStatus(); showTime();">
+    <table id="main_table">
+      <caption>
+        <div>
+          <div style="width: 95vw; position: absolute; z-index:10;">【　高桂分隊－火警出勤人員、車輛分配表　】</div> 
+          <div style="position: absolute; right: 2.5vw; z-index:20;">值班人員: 
+            <u><span class="sel" id="current_duty_name"></span></u>
+          </div>
+          <div style="width: 100%;">　</div>
+        </div>
+      </caption>
+      <tr>
+        <td rowspan="6" class="top_left_title">
+          <br><br>人<br>車<br>編<br>組<br>表<br><br>
+        </td>
+        <td colspan="2" class="update_time" id="last_update"></td>
+        <td class="top_left_car">火警值班</td>
+        <td class="target top_left_member top_left" id="duty_officer"></td>
+        <td rowspan="6" class="bottom_title">其<br>他<br>勤<br>務</td>
+        <td class="bottom_car" valign="middle">
+          　<span class="sel" id="other_1_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_1_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="11_55_leader"></td>
+        <td class="top_left_car">11/55/16</td>
+        <td class="target top_left_member top_left" id="11_55_driver"></td>
+        <td class="target top_left_member top_left" id="11_55_member"></td>
+        <td class="bottom_car">
+          　<span class="sel" id="other_2_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_2_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="16_61_leader"></td>
+        <td class="top_left_car">61車</td>
+        <td class="target top_left_member top_left" id="16_61_driver"></td>
+        <td class="target top_left_member top_left" id="16_61_member"></td>
+        <td class="bottom_car">
+          　<span class="sel" id="other_3_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_3_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="331_leader"></td>
+        <td class="top_left_car">中指車</td>
+        <td class="target top_left_member top_left" id="331_driver"></td>
+        <td class="target_disable top_left_member" id="331_member"></td>
+        <td class="bottom_car">
+          　<span class="sel" id="other_4_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_4_member"></td>
+      </tr>
+      <tr>
+        <td class="target_disable top_left_leader top_left" id="31_71_leader"></td>
+        <td class="top_left_car">31/71車</td>
+        <td class="target top_left_member top_left" id="31_71_driver"></td>
+        <td class="target top_left_member top_left" id="31_71_member"></td>
+        <td class="bottom_car">
+          　<span class="sel" id="other_5_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_5_member"></td>
+      </tr>
+      <tr>
+        <td class="target_disable top_left_leader top_left" id="91_92_leader"></td>
+        <td class="top_left_car">91/92車</td>
+        <td class="target top_left_member top_left" id="91_92_driver"></td>
+        <td class="target top_left_member top_left" id="91_92_member"></td>
+        <td class="bottom_car">
+          　<span class="sel" id="other_6_car"></span>　
+        </td>
+        <td class="target bottom_member" id="other_6_member"></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td rowspan="4" class="top_right_title">
+          車<br>組<br>派<br>遣<br>
+        </td>
+        <td class="target top_right_leader" id="car_1_leader"></td>
+        <td class="top_right_car">
+          <span class="sel" id="car_1_name"></span>
+          <span class="sel" id="car_1_out"></span>
+        </td>
+        <td class="target top_right_member" id="car_1_driver"></td>
+        <td class="target top_right_member" id="car_1_member"></td>
+        <td colspan="3" rowspan="4" class="datetime" id="datetime"></td>
+      </tr>
+      <tr>
+        <td class="target top_right_leader" id="car_2_leader"></td>
+        <td class="top_right_car">
+          <span class="sel" id="car_2_name"></span>
+          <span class="sel" id="car_2_out"></span>
+        </td>
+        <td class="target top_right_member" id="car_2_driver"></td>
+        <td class="target top_right_member" id="car_2_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_right_leader" id="car_3_leader"></td>
+        <td class="top_right_car">
+          <span class="sel" id="car_3_name"></span>
+          <span class="sel" id="car_3_out"></span>
+        </td>
+        <td class="target top_right_member" id="car_3_driver"></td>
+        <td class="target top_right_member" id="car_3_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_right_leader" id="car_4_leader"></td>
+        <td class="top_right_car">
+          <span class="sel" id="car_4_name"></span>
+          <span class="sel" id="car_4_out"></span>
+        </td>
+        <td class="target top_right_member" id="car_4_driver"></td>
+        <td class="target top_right_member" id="car_4_member"></td>
+      </tr>
+    </table>
+  </body>
+</html>

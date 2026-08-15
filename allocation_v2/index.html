@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>人車分配表-設定(新)</title>
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- import the webpage's javascript file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./script.js" defer></script>
+  </head>
+  <body onload="getCurrentStatus(); showTime();">
+    <table id="main_table">
+      <caption>
+        <div>
+          <div style="width: 95vw; position: absolute; z-index:10;">【　高桂分隊－火警出勤人員、車輛分配表　】</div> 
+          <div style="position: absolute; right: 2.5vw; z-index:20;">值班人員: 
+          <select class="current_duty" style="font-size: 80%;" id="current_duty_name">
+            <option value="none">請選擇</option>
+          </select>
+          </div>
+          <div style="width: 100%;">　</div>
+        </div>
+      </caption>
+      <tr>
+        <td rowspan="6" class="top_left_title">
+          <button class="button" id="save_default"><b>儲存</b></button>
+          <br><br>人<br>車<br>編<br>組<br>表<br><br>
+          <button class="button" id="sort"><b>排列</b></button>
+          <button class="button" id="reset"><b>重置</b></button>
+        </td>
+        <td colspan="2" class="update_time" id="last_update"></td>
+        <td class="top_left_car">火警值班</td>
+        <td class="target top_left_member top_left" id="duty_officer"></td>
+        <td rowspan="6" class="bottom_title">其<br>他<br>勤<br>務</td>
+        <td class="bottom_car" valign="middle">
+          <select class="bottom_select" id="other_1_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_1_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_1_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="11_55_leader"></td>
+        <td class="top_left_car">11/55/16</td>
+        <td class="target top_left_member top_left" id="11_55_driver"></td>
+        <td class="target top_left_member top_left" id="11_55_member"></td>
+        <td class="bottom_car">
+          <select class="bottom_select" id="other_2_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_2_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_2_member"></td>
+        
+        
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="16_61_leader"></td>
+        <td class="top_left_car">61車</td>
+        <td class="target top_left_member top_left" id="16_61_driver"></td>
+        <td class="target top_left_member top_left" id="16_61_member"></td>
+        <td class="bottom_car">
+          <select class="bottom_select" id="other_3_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_3_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_3_member"></td>
+      </tr>
+      <tr>
+        <td class="target top_left_leader top_left" id="331_leader"></td>
+        <td class="top_left_car">中指車</td>
+        <td class="target top_left_member top_left" id="331_driver"></td>
+        <td class="target_disable top_left_member" id="331_member"></td>
+        <td class="bottom_car">
+          <select class="bottom_select" id="other_4_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_4_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_4_member"></td>
+        
+      </tr>
+      <tr>
+        <td class="target_disable top_left_leader top_left" id="31_71_leader"></td>
+        <td class="top_left_car">31/71車</td>
+        <td class="target top_left_member top_left" id="31_71_driver"></td>
+        <td class="target top_left_member top_left" id="31_71_member"></td>
+        <td class="bottom_car">
+          <select class="bottom_select" id="other_5_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_5_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_5_member"></td>
+        
+      </tr>
+      <tr>
+        <td class="target_disable top_left_leader top_left" id="91_92_leader"></td>
+        <td class="top_left_car">91/92車</td>
+        <td class="target top_left_member top_left" id="91_92_driver"></td>
+        <td class="target top_left_member top_left" id="91_92_member"></td>
+        <td class="bottom_car">
+          <select class="bottom_select" id="other_6_car">
+            <option value="none">請選擇</option>
+            <option value="rest">休息</option>
+            <option value="train">訓練</option>
+            <option value="business">洽公</option>
+            <option value="service">警備車</option>
+            <option value="truck">大紅</option>
+            <option value="moto_513">機車513</option>
+            <option value="moto_515">機車515</option>
+            <option value="moto_750">機車750</option>
+            <option value="moto_751">機車751</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+          </select>
+          <button class="button_back" id="other_6_back"><b>返隊</b></button>
+        </td>
+        <td class="target bottom_member" id="other_6_member"></td>
+        
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td rowspan="4" class="top_right_title">
+          <button class="button" id="broadcast"><b>廣播</b></button>
+          車<br>組<br>派<br>遣<br>
+        </td>
+        <td rowspan="4" class="top_right_title_2">
+          <button class="button_ems" id="ems"><b>救護</b></button>
+          <button class="button_fire" id="fire_middle"><b>三中</b></button>
+          <button class="button_fire" id="fire_big"><b>三大</b></button>
+          <button class="button_fire_3" id="fire_other"><b>非三大</b></button>
+          <button class="button_other" id="other"><b>其他</b></button>
+        </td>
+        <td class="top_right_broadcast"><input type="checkbox" class="broadcast-checkbox" id="car_1_broadcast"/></td>
+        <td class="target top_right_leader" id="car_1_leader"></td>
+        <td class="top_right_car">
+          <select class="top_right_select" id="car_1_name">
+            <option value="none">請選擇</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+            <option value="service">警備車</option>
+          </select>
+          <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch1" class="onoffswitch-checkbox" id="car_1_out" tabindex="0">
+            <label class="onoffswitch-label" for="car_1_out">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </td>
+        <td class="target top_right_member" id="car_1_driver"></td>
+        <td class="target top_right_member" id="car_1_member"></td>
+        
+        <td colspan="3" rowspan="4" class="datetime" id="datetime"></td>
+      </tr>
+      <tr>
+        <td class="top_right_broadcast"><input type="checkbox" class="broadcast-checkbox" id="car_2_broadcast"/></td>
+        <td class="target top_right_leader" id="car_2_leader"></td>
+        <td class="top_right_car">
+          <select class="top_right_select" id="car_2_name">
+            <option value="none">請選擇</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+            <option value="service">警備車</option>
+          </select>
+          <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch2" class="onoffswitch-checkbox" id="car_2_out" tabindex="0">
+            <label class="onoffswitch-label" for="car_2_out">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </td>
+        <td class="target top_right_member" id="car_2_driver"></td>
+        <td class="target top_right_member" id="car_2_member"></td>
+      </tr>
+      <tr>
+        <td class="top_right_broadcast"><input type="checkbox" class="broadcast-checkbox" id="car_3_broadcast"/></td>
+        <td class="target top_right_leader" id="car_3_leader"></td>
+        <td class="top_right_car">
+          <select class="top_right_select" id="car_3_name">
+            <option value="none">請選擇</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+            <option value="service">警備車</option>
+          </select>
+          <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch3" class="onoffswitch-checkbox" id="car_3_out" tabindex="0">
+            <label class="onoffswitch-label" for="car_3_out">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </td>
+        <td class="target top_right_member" id="car_3_driver"></td>
+        <td class="target top_right_member" id="car_3_member"></td>
+      </tr>
+      <tr>
+        <td class="top_right_broadcast"><input type="checkbox" class="broadcast-checkbox" id="car_4_broadcast"/></td>
+        <td class="target top_right_leader" id="car_4_leader"></td>
+        <td class="top_right_car">
+          <select class="top_right_select" id="car_4_name">
+            <option value="none">請選擇</option>
+            <option value="11">11車</option>
+            <option value="16">16車</option>
+            <option value="55">55車</option>
+            <option value="61">61車</option>
+            <option value="331">中指車</option>
+            <option value="31">31車</option>
+            <option value="71">71車</option>
+            <option value="91">91車</option>
+            <option value="92">92車</option>
+            <option value="service">警備車</option>
+          </select>
+          <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch4" class="onoffswitch-checkbox" id="car_4_out" tabindex="0">
+            <label class="onoffswitch-label" for="car_4_out">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </td>
+        <td class="target top_right_member" id="car_4_driver"></td>
+        <td class="target top_right_member" id="car_4_member"></td>
+      </tr>
+    </table>
+    
+    <div class="member_list_content">
+      <div class="member_list_head" style="vertical-align:middel;">
+        <span>【人員名單】 </span>
+        名字 <input type="text" id="new_user_name" size="5"></input>
+        <button onclick="createCadre()">新增幹部</button>
+        <button onclick="createMember()">新增隊員</button>
+        <span class="drop_text">拖放至此處刪除人員</span>
+      </div>
+      <div class="member_list"  id="idle">
+      </div>
+    </div>
+
+    <table class="main_table">
+      <colgroup>
+        <col span="9" style="background-color: #d0d0d0">
+      </colgroup>
+      <tr>
+        <th colspan="9">值 宿 專 用</th>
+      </tr>
+      <tr>
+        <th class="car car_col">時段</th>
+        <td colspan="2">0-2</td>
+        <td colspan="2">2-4</td>
+        <td colspan="2">4-6</td>
+        <td colspan="2">6-8</td>
+      </tr>
+      <tr>
+        <th class="car car_col">順序</th>
+        <td><b>a　|　1</b></td>
+        <td><b>b　|　2</b></td>
+        <td><b>a　|　1</b></td>
+        <td><b>b　|　2</b></td>
+        <td><b>a　|　1</b></td>
+        <td><b>b　|　2</b></td>
+        <td><b>a　|　1</b></td>
+        <td><b>b　|　2</b></td>
+      </tr>
+      <tr style="background: #eaeaea">
+        <th class="car car_col">救護 91</td>
+        <td class="night" id="0_2_91_member_1"></td>
+        <td class="night" id="0_2_91_member_2"></td>
+        <td class="night" id="2_4_91_member_1"></td>
+        <td class="night" id="2_4_91_member_2"></td>
+        <td class="night" id="4_6_91_member_1"></td>
+        <td class="night" id="4_6_91_member_2"></td>
+        <td class="night" id="6_8_91_member_1"></td>
+        <td class="night" id="6_8_91_member_2"></td>
+      </tr>
+      <tr style="background: #eaeaea">
+        <th class="car car_col">救護 92</td>
+        <td class="night" id="0_2_92_member_1"></td>
+        <td class="night" id="0_2_92_member_2"></td>
+        <td class="night" id="2_4_92_member_1"></td>
+        <td class="night" id="2_4_92_member_2"></td>
+        <td class="night" id="4_6_92_member_1"></td>
+        <td class="night" id="4_6_92_member_2"></td>
+        <td class="night" id="6_8_92_member_1"></td>
+        <td class="night" id="6_8_92_member_2"></td>
+      </tr>
+      <tr style="background: #eaeaea">
+        <th class="car car_col">備勤</td>
+        <td class="night" id="0_2_prepare_1"></td>
+        <td class="night" id="0_2_prepare_2"></td>
+        <td class="night" id="2_4_prepare_1"></td>
+        <td class="night" id="2_4_prepare_2"></td>
+        <td class="night" id="4_6_prepare_1"></td>
+        <td class="night" id="4_6_prepare_2"></td>
+        <td class="night" id="6_8_prepare_1"></td>
+        <td class="night" id="6_8_prepare_2"></td>
+      </tr>
+    </table>
+
+    <div class="night_member_list_content">
+      <div class="member_list_head" style="vertical-align:middel;">
+        <span>【值宿用人員名單】</span>
+      </div>
+      <div class="member_list"  id="all_member">
+      </div>
+    </div>
+  </body>
+</html>
